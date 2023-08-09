@@ -41,6 +41,27 @@ ProductRouter.get("/", async (req, res) => {
   }
 });
 
+ProductRouter.get("/:id", async(req,res)=>{
+
+  const{id} = req.params;
+
+ try {
+  const product = await ProductModel.findById(id)
+  if(!product){
+    res.status(404).send("Product Not Found")
+  }else{
+
+    res.send(product)
+  }
+ } catch (error) {
+
+      console.log("An error while find product by id ")
+      console.log(error)
+
+      res.status(501).send({"message":"An error while find product by id ", error})
+ }
+})
+
 
 // Post or Create endpoint to create a product  
 ProductRouter.post("/create", authentication, async (req, res) => {
