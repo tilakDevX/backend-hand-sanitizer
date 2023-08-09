@@ -1,19 +1,49 @@
 const { Router } = require("express");
 
 const { ProductModel } = require("../models/Product.model");
+const {authentication}  = require("../middleWares/authentication")
  
 
 const ProductRouter = Router();
 
 // Get   endpoint to get all products
 ProductRouter.get("/", async (req, res) => {
-  const products = await ProductModel.find();
+  let query = ProductModel.find();
 
-  res.send({ message: "Successfully Got Data", product: products });
+  // Apply sorting based on the 'sort' query parameter
+  if (req.query.sort === 'priceLowToHigh') {
+    query = query.sort({ MRP: 1 }); // Sort by 'finalPrice' field in ascending order
+  } else if (req.query.sort === 'priceHighToLow') {
+    query = query.sort({ MRP: -1 }); // Sort by 'finalPrice' field in descending order
+  }
+
+  // Apply filtering based on the 'brand' query parameter
+  if (req.query.brand) {
+    query = query.where({ brand: req.query.brand });
+  }
+
+  // Pagination logic - you can modify this as needed
+  const limit = parseInt(req.query._limit);
+  const page = parseInt(req.query._page) || 1;
+  const skip = (page - 1) * limit;
+
+  try {
+    const totalProducts = await ProductModel.countDocuments(query);
+    const products = await query.skip(skip).limit(limit).exec();
+
+    res.send({
+      message: "Successfully Got Data",
+      product: products,
+      totalCount: totalProducts,
+    });
+  } catch (error) {
+    res.status(500).send({ message: "Error fetching data", error: error.message });
+  }
 });
 
+
 // Post or Create endpoint to create a product  
-ProductRouter.post("/create", async (req, res) => {
+ProductRouter.post("/create", authentication, async (req, res) => {
   const { brand, MRP, finalPrice, img } = req.body;
   console.log(req.body);
  
@@ -30,7 +60,7 @@ ProductRouter.post("/create", async (req, res) => {
 });
 
 // DELETE endpoint to delete a product by its ID
-ProductRouter.delete("/delete/:productID", async (req, res) => {
+ProductRouter.delete("/delete/:productID",authentication, async (req, res) => {
   try {
     const productID = req.params.productID;
     const deletedProduct = await ProductModel.findByIdAndDelete(productID);
@@ -44,7 +74,7 @@ ProductRouter.delete("/delete/:productID", async (req, res) => {
 });
 
 // PUT endpoint to edit a product by its ID
-ProductRouter.put("/edit/:productID", async (req, res) => {
+ProductRouter.put("/edit/:productID", authentication, async (req, res) => {
     console.log(req.body)
   try {
     const productID = req.params.productID;

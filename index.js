@@ -3,24 +3,26 @@ const express = require("express");
 const cors = require("cors")
 
 const { connection } = require("./config/db");
-const { authentication } = require("./middleWares/authentication");
+// const { authentication } = require("./middleWares/authentication");
 const { userRouter } = require("./routes/userRouter");
 const { ProductRouter } = require("./routes/productRouter");
 
 
 const app = express();
 app.use(express.json())
+// const corsOptions = {
+//   origin: ["http://127.0.0.1:5173/"],
+// };
 
-app.use(cors({
-    origin : "*"
-}))
+// app.use(cors(corsOptions));
+app.use(cors())
 
 app.get("/", (req, res)=>{
     res.send("HomePage.")
 })
 
 app.use("/user", userRouter)
-app.use("/products",authentication, ProductRouter)
+app.use("/products", ProductRouter)
 
 let PORT = 8500;
 

@@ -16,7 +16,7 @@ userRouter.post("/signup", async (req, res) => {
 
   if (exist.length > 0) {
     console.log(exist);
-    res.send({ message: "you are signup already." });
+    res.send({ message: "You are signup already." });
   } else {
     bcrypt.hash(password, 5, async function (err, hash) {
       // Store hash in your password DB.
@@ -34,7 +34,7 @@ userRouter.post("/signup", async (req, res) => {
 
       try {
         await user.save();
-        res.status(200).send({"message": "Sign successfully."});
+        res.status(200).send({"message": "Sign in successfully."});
       } catch (error) {
         console.log("Failed to save into db", error);
         res.status(500).send({"message":"Failed to save into db"});
@@ -48,7 +48,7 @@ userRouter.post("/login", async (req, res)=>{
 
     const user = await UserModel.findOne({email})
     if(!user){
-        res.send({"message": " Please Sign Up"})
+        res.send({"message": " Please Sign Up, Before Sign in"})
     }
     else{
         const hash = user.password;
