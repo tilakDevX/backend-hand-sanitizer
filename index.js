@@ -5,7 +5,7 @@ const cors = require("cors")
 const { connection } = require("./config/db");
 const { authentication } = require("./middleWares/authentication");
 const { userRouter } = require("./routes/userRouter");
-const { BlogRouter } = require("./routes/blogRouter");
+const { ProductRouter } = require("./routes/productRouter");
 
 
 const app = express();
@@ -20,7 +20,7 @@ app.get("/", (req, res)=>{
 })
 
 app.use("/user", userRouter)
-app.use("/blogs",authentication, BlogRouter)
+app.use("/blogs",authentication, ProductRouter)
 
 let PORT = 8500;
 

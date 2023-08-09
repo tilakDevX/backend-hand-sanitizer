@@ -34,10 +34,10 @@ userRouter.post("/signup", async (req, res) => {
 
       try {
         await user.save();
-        res.status(200).send("Sign successfully.");
+        res.status(200).send({"message": "Sign successfully."});
       } catch (error) {
         console.log("Failed to save into db", error);
-        res.status(500).send("Failed to save into db");
+        res.status(500).send({"message":"Failed to save into db"});
       }
     });
   }
@@ -63,7 +63,7 @@ userRouter.post("/login", async (req, res)=>{
 
             }else{
 
-                res.send("Login failed, invalid credentials")
+                res.send({"message":"Login failed, invalid credentials"})
 
             }
         });
