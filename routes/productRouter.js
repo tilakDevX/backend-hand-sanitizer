@@ -1,111 +1,65 @@
-const {Router} = require("express");
+const { Router } = require("express");
 
-const {ProductModel} = require("../models/Product.model")
-const {UserModel} = require("../models/User.model")
-
-
+const { ProductModel } = require("../models/Product.model");
+ 
 
 const ProductRouter = Router();
 
+// Get   endpoint to get all products
+ProductRouter.get("/", async (req, res) => {
+  const products = await ProductModel.find();
 
+  res.send({ message: "Successfully Got Data", product: products });
+});
 
+// Post or Create endpoint to create a product  
+ProductRouter.post("/create", async (req, res) => {
+  const { brand, MRP, finalPrice, img } = req.body;
+  console.log(req.body);
+ 
 
+  const new_product = new ProductModel({
+    brand,
+    MRP,
+    finalPrice,
+    img,
+  });
+  console.log(new_product);
+  await new_product.save();
+  res.status(200).send("Product Created");
+});
 
-ProductRouter.get("/", async (req, res)=>{
-
-    let filters = {};
-    if (req.query.category) {
-        filters.category = req.query.category;
+// DELETE endpoint to delete a product by its ID
+ProductRouter.delete("/delete/:productID", async (req, res) => {
+  try {
+    const productID = req.params.productID;
+    const deletedProduct = await ProductModel.findByIdAndDelete(productID);
+    if (!deletedProduct) {
+      return res.status(404).send({ message: "Product not found" });
     }
+    res.send({ message: "Product deleted successfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Error deleting product" });
+  }
+});
 
-    if (req.query.author) {
-        filters.author = req.query.author;
-    }
-
-    const blogs = await ProductModel.find(filters);
-
-    res.send({"message": "your blogs", "blog":blogs})
-})
-
-
-ProductRouter.post("/create", async(req,res)=>{
-
-    const {title, category, content,image,email} = req.body;
+// PUT endpoint to edit a product by its ID
+ProductRouter.put("/edit/:productID", async (req, res) => {
     console.log(req.body)
+  try {
+    const productID = req.params.productID;
+    const updatedProduct = await ProductModel.findByIdAndUpdate(
+      productID,
+      req.body,
+      { new: true }
+    );
 
-    const userId = req.userId;
-    console.log(userId)
-    const user = await UserModel.findOne({_id: userId})
-
-    const new_blog = new ProductModel({
-        title,
-        category,
-        content,
-        image,
-        email:user.email,
-        author: user.name,
-        
-
-    })
-    console.log(new_blog)
-    await new_blog.save();
-    res.status(200).send("Blog Created")
-
-    
-
-
-})
-
-ProductRouter.delete("/delete/:blogID", async(req,res)=>{
-
-    const blogID = req.params.blogID;
-
-
-    const user_id = req.userId;
-
-    const user = await UserModel.findOne({_id: user_id})
-
-    const user_email = user.email;
-
-    const blog = await ProductModel.findOne({_id: blogID})
-
-
-    const blog_author_email = blog.email;
-
-
-    if(user_email != blog_author_email){
-        res.send({"message": "you are not authorized"})
-    }else{
-        await ProductModel.findByIdAndDelete(blogID)
-        res.send(`blog ${blogID} deleted`)
+    if (!updatedProduct) {
+      return res.status(404).send({ message: "Product not found" });
     }
-})
-ProductRouter.put("/edit/:blogID", async(req,res)=>{
-
-    const blogID = req.params.blogID;
-
-    const payload  = req.body;
-
-    const user_id = req.userId;
-
-    const user = await UserModel.findOne({_id: user_id})
-
-    const user_email = user.email;
-
-    const blog = await ProductModel.findOne({_id: blogID})
-
-
-    const blog_author_email = blog.email;
-
-    // console.log(user_email,blog_author_email,blog)
-
-
-    if(user_email != blog_author_email){
-        res.send({"message": "you are not authorized"})
-    }else{
-        await ProductModel.findByIdAndUpdate(blogID, payload)
-        res.send(`blog ${blogID} updated`)
-    }
-})
-
-module.exports = {ProductRouter}
+    res.send(updatedProduct);
+  } catch (error) {
+    res.status(500).send({ message: "Error updating product" });
+  }
+});
+module.exports = { ProductRouter };

@@ -20,7 +20,7 @@ app.get("/", (req, res)=>{
 })
 
 app.use("/user", userRouter)
-app.use("/blogs",authentication, ProductRouter)
+app.use("/products",authentication, ProductRouter)
 
 let PORT = 8500;
 

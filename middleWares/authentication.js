@@ -15,9 +15,9 @@ const authentication = (req,res, next)=>{
             if(err){
                 res.send({"message": "Please Login With Correct Crediential"})
             }else{
-                const userId = decoded.userId
+                // const userId = decoded.userId
 
-                req.userId = userId;
+                // req.userId = userId;
 
                 next();
             }
