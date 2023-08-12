@@ -48,7 +48,7 @@ userRouter.post("/login", async (req, res)=>{
 
     const user = await UserModel.findOne({email})
     if(!user){
-        res.send({"message": " Please Sign Up, Before Sign in"})
+        res.send({"message": "Please Sign Up, Before Sign in"})
     }
     else{
         const hash = user.password;
@@ -57,8 +57,11 @@ userRouter.post("/login", async (req, res)=>{
 
             if(result){
                 const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
-
-                res.status(200).send({"message":"Login successfully", token})
+                let user_detail = {
+                  name:user.name,
+                  email:user.email,
+                }
+                res.status(200).send({"message":"Login successfully","user": user_detail, token})
 
 
             }else{
