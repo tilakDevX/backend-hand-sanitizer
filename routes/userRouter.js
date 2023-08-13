@@ -60,6 +60,7 @@ userRouter.post("/login", async (req, res)=>{
                 let user_detail = {
                   name:user.name,
                   email:user.email,
+                  role:user.role
                 }
                 res.status(200).send({"message":"Login successfully","user": user_detail, token})
 
