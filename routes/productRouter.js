@@ -19,7 +19,8 @@ ProductRouter.get("/", async (req, res) => {
 
   // Apply filtering based on the 'brand' query parameter
   if (req.query.brand) {
-    query = query.where({ brand: req.query.brand });
+    const brandRegex = new RegExp(req.query.brand, 'i');
+    query = query.where({ brand: brandRegex });
   }
 
   // Pagination logic - you can modify this as needed
@@ -28,7 +29,18 @@ ProductRouter.get("/", async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
-    const totalProducts = await ProductModel.countDocuments(query);
+    let totalProductsQuery = ProductModel.find();
+
+    // Apply filtering based on the 'brand' query parameter for total count
+    if (req.query.brand) {
+      const brandRegex = new RegExp(req.query.brand, 'i');
+      totalProductsQuery = totalProductsQuery.where({ brand: brandRegex });
+    }else{
+      totalProductsQuery = ProductModel.find()
+
+    }
+    const totalProducts = await totalProductsQuery.countDocuments();
+
     const products = await query.skip(skip).limit(limit).exec();
 
     res.send({
@@ -40,6 +52,7 @@ ProductRouter.get("/", async (req, res) => {
     res.status(500).send({ message: "Error fetching data", error: error.message });
   }
 });
+
 
 ProductRouter.get("/:id", async(req,res)=>{
 
