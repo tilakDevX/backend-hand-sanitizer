@@ -1,11 +1,9 @@
 const { Router } = require("express");
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken');
-require('dotenv').config()
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const { UserModel } = require("../models/User.model");
-
-
 
 const userRouter = Router();
 
@@ -29,51 +27,77 @@ userRouter.post("/signup", async (req, res) => {
         name,
         email,
         password: hash,
-         
       });
 
       try {
         await user.save();
-        res.status(200).send({"message": "Sign in successfully."});
+        res.status(200).send({ message: "Sign in successfully." });
       } catch (error) {
         console.log("Failed to save into db", error);
-        res.status(500).send({"message":"Failed to save into db"});
+        res.status(500).send({ message: "Failed to save into db" });
       }
     });
   }
 });
 
-userRouter.post("/login", async (req, res)=>{
-    const {email, password} = req.body;
+userRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-    const user = await UserModel.findOne({email})
-    if(!user){
-        res.send({"message": "Please Sign Up, Before Sign in"})
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    res.send({ message: "Please Sign Up, Before Sign in" });
+  } else {
+    const hash = user.password;
+    bcrypt.compare(password, hash, function (err, result) {
+      // result == true
+
+      if (result) {
+        const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
+        let user_detail = {
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
+        res
+          .status(200)
+          .send({ message: "Login successfully", user: user_detail, token });
+      } else {
+        res.send({ message: "Login failed, invalid credentials" });
+      }
+    });
+  }
+});
+
+userRouter.post('/newpassword', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      res.status(404).send({ message: "Your account does not exist. Please sign up." });
+    } else {
+      bcrypt.hash(password, 10, async function (err, hash) {
+        if (err) {
+          res.status(500).send({ message: "Error while hashing password" });
+        }
+
+        user.password = hash;
+
+        try {
+          await user.save();
+          res.status(200).send({ message: "Password updated successfully." });
+        } catch (error) {
+          console.log("Failed to save into db", error);
+          res.status(500).send({ message: "Failed to update password" });
+        }
+      });
     }
-    else{
-        const hash = user.password;
-        bcrypt.compare(password, hash, function(err, result) {
-            // result == true
+  } catch (error) {
+    console.log("Error while finding user", error);
+    res.status(500).send({ message: "Error while finding user" });
+  }
+});
 
-            if(result){
-                const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
-                let user_detail = {
-                  name:user.name,
-                  email:user.email,
-                  role:user.role
-                }
-                res.status(200).send({"message":"Login successfully","user": user_detail, token})
-
-
-            }else{
-
-                res.send({"message":"Login failed, invalid credentials"})
-
-            }
-        });
-    }
-        
-
-})
 
 module.exports = { userRouter };
