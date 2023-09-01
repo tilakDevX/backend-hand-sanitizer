@@ -1,11 +1,13 @@
 const express = require("express");
 
 const cors = require("cors")
+const cookieParser = require('cookie-parser');
 
 const { connection } = require("./config/db");
 // const { authentication } = require("./middleWares/authentication");
 const { userRouter } = require("./routes/userRouter");
 const { ProductRouter } = require("./routes/productRouter");
+const { CartRouter } = require("./routes/cartRouter");
 
 
 const app = express();
@@ -23,6 +25,7 @@ app.get("/", (req, res)=>{
 
 app.use("/user", userRouter)
 app.use("/products", ProductRouter)
+app.use("/user/cart",cookieParser(), CartRouter)
 
 let PORT = 8500;
 
