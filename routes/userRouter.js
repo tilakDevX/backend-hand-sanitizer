@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
+
+
 const { UserModel } = require("../models/User.model");
 
 const userRouter = Router();
@@ -53,6 +55,15 @@ userRouter.post("/login", async (req, res) => {
 
       if (result) {
         const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
+
+        // Set the token as a cookie
+        res.cookie('authToken', token, {
+          maxAge: 3600000, // Expires in 1 hour
+          httpOnly: true, // Cookie cannot be accessed via JavaScript
+          secure: true, // Use only on HTTPS
+          sameSite: 'strict' // Restrict cookie to same-site requests
+        });
+
         let user_detail = {
           name: user.name,
           email: user.email,
