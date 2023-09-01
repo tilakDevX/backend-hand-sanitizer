@@ -58,7 +58,7 @@ userRouter.post("/login", async (req, res) => {
 
         // Set the token as a cookie
         res.cookie('authToken', token, {
-          maxAge: 24 * 60 * 60 * 1000, // Expires in 1 hour
+          maxAge: 24 * 60 * 60 * 1000, // Expires in 1 day
           httpOnly: true, // Cookie cannot be accessed via JavaScript
           secure: true, // Use only on HTTPS
           sameSite: 'strict' // Restrict cookie to same-site requests
