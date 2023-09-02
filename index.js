@@ -8,6 +8,7 @@ const { connection } = require("./config/db");
 const { userRouter } = require("./routes/userRouter");
 const { ProductRouter } = require("./routes/productRouter");
 const { CartRouter } = require("./routes/cartRouter");
+const { authentication } = require("./middleWares/authentication");
 
 
 const app = express();
@@ -25,8 +26,14 @@ app.get("/", (req, res)=>{
 
 app.use("/user", userRouter)
 app.use("/products", ProductRouter)
-app.use("/user/cart",cookieParser(), CartRouter)
+app.use("/user/cart",authentication, CartRouter)
 
+
+
+app.use((req, res)=>{
+    res.status(404).send("The URL or Endpoint not exist, Please try again")
+    
+})
 let PORT = 8500;
 
 app.listen(PORT, async()=>{
