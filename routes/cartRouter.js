@@ -43,6 +43,8 @@ CartRouter.post("/", async (req, res) => {
   }
 });
 
+
+//Delete: Cart product
 CartRouter.delete("/product/:id", async (req, res) => {
   try {
     const { id } = req.params;
