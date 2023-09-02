@@ -4,6 +4,7 @@ const { CartModel } = require("../models/Cart.model");
 
 const CartRouter = Router();
 
+//Get Method cart products
 CartRouter.get("/product", async (req, res) => {
   try {
     const cart_items = await CartModel.find({ memberId: req.userId });
