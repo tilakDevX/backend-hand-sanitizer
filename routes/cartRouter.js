@@ -20,6 +20,7 @@ CartRouter.get("/product", async (req, res) => {
   }
 });
 
+//Post method 
 CartRouter.post("/", async (req, res) => {
   try {
     console.log(req.body);
