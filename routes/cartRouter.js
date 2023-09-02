@@ -20,7 +20,7 @@ CartRouter.get("/product", async (req, res) => {
   }
 });
 
-//Post method 
+//Post method
 CartRouter.post("/", async (req, res) => {
   try {
     console.log(req.body);
@@ -42,7 +42,6 @@ CartRouter.post("/", async (req, res) => {
     res.status(404).send("Please login first to add product into cart");
   }
 });
-
 
 //Delete: Cart product
 CartRouter.delete("/product/:id", async (req, res) => {
