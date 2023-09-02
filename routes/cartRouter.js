@@ -41,7 +41,22 @@ CartRouter.get("/product", async (req, res) => {
     }
 });
 
+CartRouter.delete("/product/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
 
+        const deletedItem = await CartModel.findOneAndDelete({ memberId: req.userId, _id: id });
+
+        if (!deletedItem) {
+            return res.status(404).json({ message: "Item not found in the cart" });
+        }
+
+        res.status(200).json({ message: "Item deleted successfully" });
+    } catch (error) {
+        console.error("Error while deleting products from cart", error);
+        res.status(500).json({ message: "Error while deleting products from cart" });
+    }
+});
 
 
 module.exports = { CartRouter };
