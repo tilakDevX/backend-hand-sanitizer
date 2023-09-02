@@ -34,7 +34,7 @@ CartRouter.post("/add", async (req, res) => {
       //   console.log("this is the user: ", user);
       await cart_item.save();
 
-      res.status(200).send({"message": "Success", "products": cart_item });
+      res.status(200).send({"message": "success", "products": cart_item });
     }
   } catch (error) {
     console.log("Error while adding product into cart");
