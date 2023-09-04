@@ -30,7 +30,7 @@ CartRouter.post("/add", async (req, res) => {
       memberId: req.userId,
       product: req.body,
       quantity:1,
-      total: req.body.MRP
+      total: req.body.finalPrice
     });
     if (user) {
       //   console.log("this is the user: ", user);
