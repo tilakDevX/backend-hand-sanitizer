@@ -29,6 +29,8 @@ CartRouter.post("/add", async (req, res) => {
     const cart_item = new CartModel({
       memberId: req.userId,
       product: req.body,
+      quantity:1,
+      total: req.body.MRP
     });
     if (user) {
       //   console.log("this is the user: ", user);
