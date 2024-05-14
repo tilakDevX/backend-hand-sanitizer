@@ -9,6 +9,7 @@ const { userRouter } = require("./routes/userRouter");
 const { ProductRouter } = require("./routes/productRouter");
 const { CartRouter } = require("./routes/cartRouter");
 const { authentication } = require("./middleWares/authentication");
+const { OrderedProductRouter } = require("./routes/orderProductRouter");
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 app.use("/user", userRouter);
 app.use("/products", ProductRouter);
 app.use("/user/cart", authentication, CartRouter);
+app.use("/user/ordered_product", authentication, OrderedProductRouter);
 
 app.use((req, res) => {
   res.status(404).send("The URL or Endpoint not exist, Please try again");
