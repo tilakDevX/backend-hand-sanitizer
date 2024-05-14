@@ -11,7 +11,7 @@ OrderedProductRouter.post(
   "/ordered_product",
   authentication,
   async (req, res) => {
-    const { brand, MRP, finalPrice, img } = req.body;
+    const { brand, MRP, finalPrice, img,orderedDate } = req.body;
     console.log(req.body);
 
     const new_product = new OrderedProductModel({
